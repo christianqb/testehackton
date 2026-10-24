@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Norteando — Cultura viva da Amazônia</title>
+  <meta name="description" content="Explore, preserve e compartilhe a cultura viva da Amazônia com Norteando.">
+  <meta name="theme-color" content="#0c2e23">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- Cabeçalho e navegação -->
+  <header class="topo">
+    <div class="topo-marca">
+      <a class="marca" href="#explorar" aria-label="Norteando — início">
+        <span class="marca-glifo" aria-hidden="true">✳</span>norteando<span class="marca-ponto">.</span>
+      </a>
+      <p class="lema">Cultura viva da Amazônia</p>
+    </div>
+    <nav class="menu" aria-label="Principal">
+      <a href="#explorar" data-view="explorar"><span aria-hidden="true">◈</span> Explorar acervo</a>
+      <a href="#roteiros" data-view="roteiros"><span aria-hidden="true">⌁</span> Meus roteiros</a>
+      <a href="#favoritos" data-view="favoritos"><span aria-hidden="true">♡</span> Salvos <b id="contador-salvos" class="contador">0</b></a>
+      <a href="#contribuir" data-view="contribuir"><span aria-hidden="true">⊕</span> Compartilhar cultura</a>
+    </nav>
+  </header>
+
+  <!-- Barra de ferramentas: API e usuário -->
+  <div class="ferramentas">
+    <button type="button" class="chip-ferramenta" data-action="abrir-api">
+      <span aria-hidden="true">⚙</span> Conexão com a API
+    </button>
+    <div class="usuario">
+      <span class="avatar" id="avatar" aria-hidden="true">V</span>
+      <span id="nome-usuario">Visitante</span>
+      <button type="button" class="link-acao" id="btn-sessao" data-action="abrir-login">Entre para contribuir ↗</button>
+    </div>
+  </div>
+
+  <main id="conteudo">
+    <!-- Hero (somente na tela Explorar) -->
+    <section class="hero" id="hero" aria-labelledby="hero-titulo">
+      <div class="hero-trama" aria-hidden="true"></div>
+      <div class="hero-miolo">
+        <p class="sobretitulo">Feito de muitas vozes</p>
+        <h1 id="hero-titulo">A nossa cultura continua com você.</h1>
+        <p class="hero-texto">Uma história compartilhada é uma memória que fica.</p>
+        <a class="btn btn-ouro" href="#contribuir">Faça parte ↗</a>
+      </div>
+    </section>
+
+    <!-- Breadcrumb e modo -->
+    <div class="faixa">
+      <nav class="crumb" aria-label="Você está em">
+        <span>Amazônia</span> <span aria-hidden="true">/</span> <strong id="crumb-atual">Explorar acervo</strong>
+      </nav>
+      <span class="modo" id="modo" data-modo="demo"><i aria-hidden="true">●</i> <span id="modo-texto">Modo demonstrativo</span></span>
+    </div>
+
+    <!-- EXPLORAR -->
+    <section class="view" id="view-explorar" aria-labelledby="t-explorar">
+      <h2 id="t-explorar" class="so-leitor">Explorar acervo</h2>
+      <div class="filtros">
+        <label class="campo campo-busca">
+          <span class="so-leitor">Buscar no acervo</span>
+          <input type="search" id="busca" placeholder="Buscar por tema, lugar ou palavra…" autocomplete="off">
+        </label>
+        <label class="campo">
+          <span class="rotulo">Estado</span>
+          <select id="filtro-uf"></select>
+        </label>
+        <label class="campo">
+          <span class="rotulo">Ordenar</span>
+          <select id="filtro-ord">
+            <option value="recentes">Mais recentes</option>
+            <option value="az">A–Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+      <p class="contagem" id="contagem" aria-live="polite"></p>
+      <div class="grade" id="grade-acervo"></div>
+      <div class="vazio" id="vazio-acervo" hidden>
+        <p class="vazio-icone" aria-hidden="true">🌿</p>
+        <h3>Nada encontrado por aqui</h3>
+        <p>Tente outros termos ou limpe os filtros. Ou, melhor: <a href="#contribuir">compartilhe uma história</a>.</p>
+        <button type="button" class="btn btn-contorno" data-action="limpar-filtros">Limpar filtros</button>
+      </div>
+    </section>
+
+    <!-- ROTEIROS -->
+    <section class="view" id="view-roteiros" aria-labelledby="t-roteiros" hidden>
+      <div class="titulo-view">
+        <h2 id="t-roteiros">Meus roteiros</h2>
+        <p>Monte percursos culturais com os itens do acervo e compartilhe com quem vai com você.</p>
+      </div>
+      <form class="form-inline" id="form-roteiro" autocomplete="off">
+        <label class="campo campo-grande">
+          <span class="rotulo">Novo roteiro</span>
+          <input type="text" id="roteiro-nome" maxlength="60" placeholder="Ex.: Belém em um fim de semana" required>
+        </label>
+        <button class="btn btn-verde" type="submit">Criar roteiro</button>
+      </form>
+      <div id="lista-roteiros" class="roteiros"></div>
+    </section>
+
+    <!-- SALVOS -->
+    <section class="view" id="view-favoritos" aria-labelledby="t-favoritos" hidden>
+      <div class="titulo-view">
+        <h2 id="t-favoritos">Salvos</h2>
+        <p>Os itens que você guardou para voltar depois.</p>
+      </div>
+      <div class="grade" id="grade-favoritos"></div>
+      <div class="vazio" id="vazio-favoritos" hidden>
+        <p class="vazio-icone" aria-hidden="true">♡</p>
+        <h3>Você ainda não salvou nada</h3>
+        <p>Toque no coração de qualquer item do acervo para guardá-lo aqui.</p>
+        <a class="btn btn-verde" href="#explorar">Explorar acervo</a>
+      </div>
+    </section>
+
+    <!-- CONTRIBUIR -->
+    <section class="view" id="view-contribuir" aria-labelledby="t-contribuir" hidden>
+      <div class="titulo-view">
+        <h2 id="t-contribuir">Compartilhar cultura</h2>
+        <p>Conte uma tradição, um sabor, uma música, uma lenda. Cada voz ajuda a manter as raízes vivas.</p>
+      </div>
+      <form class="form-contribuir" id="form-contribuir" novalidate>
+        <label class="campo">
+          <span class="rotulo">Título *</span>
+          <input type="text" name="titulo" maxlength="80" required placeholder="Ex.: Festa do Divino em Rio Branco">
+          <small class="erro" data-erro="titulo"></small>
+        </label>
+        <div class="linha-2">
+          <label class="campo">
+            <span class="rotulo">Categoria *</span>
+            <select name="categoria" required></select>
+          </label>
+          <label class="campo">
+            <span class="rotulo">Estado *</span>
+            <select name="estado" required>
+              <option value="">Selecione…</option>
+              <option>AC</option><option>AM</option><option>AP</option><option>MA</option>
+              <option>MT</option><option>PA</option><option>RO</option><option>RR</option><option>TO</option>
+            </select>
+            <small class="erro" data-erro="estado"></small>
+          </label>
+        </div>
+        <label class="campo">
+          <span class="rotulo">Local (cidade, comunidade, rio…) *</span>
+          <input type="text" name="local" maxlength="80" required placeholder="Ex.: Tarauacá">
+          <small class="erro" data-erro="local"></small>
+        </label>
+        <label class="campo">
+          <span class="rotulo">História *</span>
+          <textarea name="descricao" rows="6" maxlength="900" required placeholder="Conte o que é, de onde vem, quem mantém viva essa tradição…"></textarea>
+          <small class="ajuda"><span id="contador-desc">0</span>/900 caracteres</small>
+          <small class="erro" data-erro="descricao"></small>
+        </label>
+        <label class="campo">
+          <span class="rotulo">Link de uma imagem (opcional)</span>
+          <input type="url" name="imagem" placeholder="https://…">
+          <small class="erro" data-erro="imagem"></small>
+        </label>
+        <div class="acoes-form">
+          <button class="btn btn-ouro" type="submit">Publicar no acervo</button>
+          <p class="ajuda" id="aviso-login">Você precisa entrar para publicar.</p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <p class="rodape-marca"><span aria-hidden="true">✳</span> norteando<span class="marca-ponto">.</span></p>
+    <p>Conectar pessoas. Preservar raízes.</p>
+    <p class="rodape-fim">Uma Amazônia, muitas histórias.</p>
+  </footer>
+
+  <!-- Modal: detalhe do item -->
+  <dialog id="dlg-detalhe" class="modal modal-grande" aria-labelledby="detalhe-titulo">
+    <button type="button" class="fechar" data-action="fechar" aria-label="Fechar">×</button>
+    <div id="detalhe-conteudo"></div>
+  </dialog>
+
+  <!-- Modal: adicionar a roteiro -->
+  <dialog id="dlg-roteiro" class="modal" aria-labelledby="roteiro-dlg-titulo">
+    <button type="button" class="fechar" data-action="fechar" aria-label="Fechar">×</button>
+    <form id="form-add-roteiro" autocomplete="off">
+      <h3 id="roteiro-dlg-titulo">Adicionar ao roteiro</h3>
+      <p class="ajuda" id="roteiro-dlg-item"></p>
+      <label class="campo">
+        <span class="rotulo">Roteiro existente</span>
+        <select id="add-roteiro-sel"></select>
+      </label>
+      <label class="campo">
+        <span class="rotulo">Ou crie um novo</span>
+        <input type="text" id="add-roteiro-novo" maxlength="60" placeholder="Nome do novo roteiro">
+      </label>
+      <div class="acoes-modal">
+        <button type="button" class="btn btn-contorno" data-action="fechar">Cancelar</button>
+        <button type="submit" class="btn btn-verde">Adicionar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal: conexão com a API -->
+  <dialog id="dlg-api" class="modal" aria-labelledby="api-titulo">
+    <button type="button" class="fechar" data-action="fechar" aria-label="Fechar">×</button>
+    <form id="form-api" autocomplete="off">
+      <h3 id="api-titulo">Conexão com a API</h3>
+      <p class="ajuda">Sem API, o Norteando funciona em modo demonstrativo com dados locais. Para conectar, informe a URL base do seu servidor.</p>
+      <label class="campo">
+        <span class="rotulo">URL base</span>
+        <input type="url" id="api-url" placeholder="https://seu-servidor.com/api">
+      </label>
+      <label class="check">
+        <input type="checkbox" id="api-ativo"> Usar a API em vez do modo demonstrativo
+      </label>
+      <details class="contrato">
+        <summary>Endpoints esperados</summary>
+        <ul>
+          <li><code>GET /acervo</code> → lista de itens</li>
+          <li><code>POST /acervo</code> → cria um item</li>
+        </ul>
+        <p>Item: <code>id, titulo, categoria, estado, local, descricao, autor, imagem, criadoEm</code>. O servidor precisa liberar CORS para este site.</p>
+      </details>
+      <p class="resultado-teste" id="api-teste" role="status"></p>
+      <div class="acoes-modal">
+        <button type="button" class="btn btn-contorno" data-action="testar-api">Testar</button>
+        <button type="submit" class="btn btn-verde">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal: login -->
+  <dialog id="dlg-login" class="modal" aria-labelledby="login-titulo">
+    <button type="button" class="fechar" data-action="fechar" aria-label="Fechar">×</button>
+    <form id="form-login" autocomplete="on">
+      <h3 id="login-titulo">Entre para contribuir</h3>
+      <p class="ajuda">Neste modo demonstrativo, seus dados ficam apenas neste navegador.</p>
+      <label class="campo">
+        <span class="rotulo">Seu nome</span>
+        <input type="text" id="login-nome" maxlength="50" required autocomplete="name">
+      </label>
+      <label class="campo">
+        <span class="rotulo">E-mail</span>
+        <input type="email" id="login-email" required autocomplete="email">
+      </label>
+      <div class="acoes-modal">
+        <button type="button" class="btn btn-contorno" data-action="fechar">Cancelar</button>
+        <button type="submit" class="btn btn-verde">Entrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
